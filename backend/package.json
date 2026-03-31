@@ -18,7 +18,7 @@
     "imap-simple": "^5.1.0",
     "jsonwebtoken": "^9.0.0",
     "mailparser": "^3.6.4",
-    "nodemailer": "^6.9.1",
+    "nodemailer": "^8.0.4",
     "sequelize": "^6.31.1",
     "sqlite3": "^5.1.6",
     "xss-clean": "^0.1.4"
