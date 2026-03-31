@@ -17,6 +17,7 @@ app.get('/', (req, res) => res.json({ status: 'SupportFlow Backend Online' }));
 // Routes
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/tickets', require('./routes/tickets'));
+app.use('/api/users', require('./routes/users'));
 
 const { pollEmails } = require('./services/emailService');
 

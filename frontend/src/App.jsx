@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Sidebar from './components/Sidebar';
 import Dashboard from './pages/Dashboard';
 import TicketDetails from './pages/TicketDetails';
+import Employees from './pages/Employees';
 import Settings from './pages/Settings';
 import Login from './pages/Login';
 
@@ -53,6 +54,8 @@ function App() {
         return <Dashboard onTicketSelect={handleTicketSelect} />;
       case 'tickets':
         return <Dashboard onTicketSelect={handleTicketSelect} />;
+      case 'team':
+        return <Employees />;
       case 'settings':
         return <Settings />;
       default:

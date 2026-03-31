@@ -68,6 +68,37 @@ const Settings = () => {
         <section style={{ background: 'white', padding: '2rem', borderRadius: 'var(--radius)', border: '1px solid var(--border)', boxShadow: 'var(--shadow-sm)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem' }}>
             <div style={{ padding: '8px', background: 'rgba(79, 70, 229, 0.1)', borderRadius: '8px', color: 'var(--accent)' }}>
+              <Mail size={20} />
+            </div>
+            <h2 style={{ fontSize: '1.125rem', fontWeight: 700 }}>Official Mail Setup</h2>
+          </div>
+          
+          <div style={{ background: '#f8fafc', padding: '1.5rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }}>
+            <p style={{ fontSize: '0.875rem', color: 'var(--text-main)', fontWeight: 600, marginBottom: '1rem' }}>SupportFlow Official Channel Settings</p>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', fontSize: '0.8125rem', color: 'var(--text-muted)' }}>
+              <div style={{ background: 'white', padding: '1rem', borderRadius: '6px', border: '1px solid var(--border)' }}>
+                <p style={{ fontWeight: 700, color: 'var(--primary)', marginBottom: '0.5rem' }}>Incoming (IMAP)</p>
+                <p>Server: imap.gmail.com</p>
+                <p>Port: 993</p>
+                <p>Security: SSL/TLS</p>
+              </div>
+              <div style={{ background: 'white', padding: '1rem', borderRadius: '6px', border: '1px solid var(--border)' }}>
+                <p style={{ fontWeight: 700, color: 'var(--primary)', marginBottom: '0.5rem' }}>Outgoing (SMTP)</p>
+                <p>Server: smtp.gmail.com</p>
+                <p>Port: 465 / 587</p>
+                <p>Security: SSL/STARTTLS</p>
+              </div>
+            </div>
+            <p style={{ marginTop: '1.5rem', fontSize: '0.75rem', color: 'var(--accent)', fontWeight: 600 }}>
+              💡 Please update your <b>.env</b> file with these parameters and your App Password to start receiving official support tickets.
+            </p>
+          </div>
+        </section>
+
+        {/* Notifications Section */}
+        <section style={{ background: 'white', padding: '2rem', borderRadius: 'var(--radius)', border: '1px solid var(--border)', boxShadow: 'var(--shadow-sm)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem' }}>
+            <div style={{ padding: '8px', background: 'rgba(79, 70, 229, 0.1)', borderRadius: '8px', color: 'var(--accent)' }}>
               <Bell size={20} />
             </div>
             <h2 style={{ fontSize: '1.125rem', fontWeight: 700 }}>Preference Settings</h2>

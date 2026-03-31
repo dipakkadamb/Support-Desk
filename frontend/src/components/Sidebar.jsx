@@ -12,8 +12,11 @@ const Sidebar = ({ activeTab, setActiveTab, onLogout }) => {
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: <LayoutDashboard size={20} /> },
     { id: 'tickets', label: 'Tickets', icon: <Ticket size={20} /> },
+    { id: 'team', label: 'Team', icon: <UserIcon size={20} />, adminOnly: true },
     { id: 'settings', label: 'Settings', icon: <Settings size={20} /> },
   ];
+
+  const filteredMenuItems = menuItems.filter(item => !item.adminOnly || user.role === 'admin');
 
   return (
     <div className="sidebar" style={{ background: '#0f172a', borderRight: 'none' }}>
@@ -26,7 +29,7 @@ const Sidebar = ({ activeTab, setActiveTab, onLogout }) => {
       
       <nav style={{ flex: 1 }}>
         <p style={{ fontSize: '0.6875rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '1rem', paddingLeft: '1rem' }}>Principal Menu</p>
-        {menuItems.map((item) => (
+        {filteredMenuItems.map((item) => (
           <div
             key={item.id}
             className={`nav-item ${activeTab === item.id ? 'active' : ''}`}
