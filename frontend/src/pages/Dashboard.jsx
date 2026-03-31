@@ -4,6 +4,10 @@ import TicketCard from '../components/TicketCard';
 import NewTicketModal from '../components/NewTicketModal';
 import { Search, Filter, Plus, Activity, AlertCircle, Clock, CheckCircle, SearchX } from 'lucide-react';
 
+const TicketSkeleton = () => (
+  <div className="ticket-card skeleton" style={{ height: '100px', border: 'none', background: 'none' }}></div>
+);
+
 const Dashboard = ({ onTicketSelect }) => {
   const [tickets, setTickets] = useState([]);
   const [filteredTickets, setFilteredTickets] = useState([]);
@@ -142,9 +146,9 @@ const Dashboard = ({ onTicketSelect }) => {
       </div>
 
       {loading ? (
-        <div className="ticket-list" style={{ opacity: 0.5 }}>
-          {[1, 2, 3].map(i => (
-            <div key={i} style={{ height: '80px', background: 'white', borderRadius: 'var(--radius)', border: '1px solid var(--border)', marginBottom: '1rem' }}></div>
+        <div className="ticket-list">
+          {[1, 2, 3, 4, 5].map(i => (
+            <TicketSkeleton key={i} />
           ))}
         </div>
       ) : error ? (

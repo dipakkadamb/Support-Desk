@@ -85,9 +85,11 @@ const Employees = () => {
       )}
 
       {loading ? (
-        <div style={{ textAlign: 'center', padding: '4rem' }}>
-          <Loader2 className="animate-spin" size={32} style={{ color: 'var(--accent)', margin: '0 auto' }} />
-          <p style={{ marginTop: '1rem', color: 'var(--text-muted)' }}>Loading team members...</p>
+        <div style={{ background: 'white', border: '1px solid var(--border)', borderRadius: 'var(--radius)', overflow: 'hidden' }}>
+          <div style={{ height: '50px', background: '#f8fafc', borderBottom: '1px solid var(--border)' }}></div>
+          {[1, 2, 3, 4].map(i => (
+            <div key={i} className="skeleton" style={{ height: '60px', margin: '1rem 1.5rem', borderRadius: '4px' }}></div>
+          ))}
         </div>
       ) : (
         <div style={{ background: 'white', border: '1px solid var(--border)', borderRadius: 'var(--radius)', overflow: 'hidden' }}>

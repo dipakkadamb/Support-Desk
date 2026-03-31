@@ -77,8 +77,18 @@ const TicketDetails = ({ ticketId, onBack }) => {
     }
   };
 
-  if (loading) return <div className="main-content"><p style={{ color: 'var(--text-muted)' }}>Loading conversation...</p></div>;
-  if (error) return <div className="main-content"><p style={{ color: 'var(--danger)' }}>{error}</p></div>;
+  if (loading) return (
+    <div className="main-content" style={{ display: 'flex', flexDirection: 'column', height: '100%', padding: '2rem' }}>
+      <div className="skeleton" style={{ height: '100px', marginBottom: '2rem', borderRadius: 'var(--radius)' }}></div>
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+        <div className="skeleton" style={{ height: '80px', width: '60%', borderRadius: 'var(--radius)' }}></div>
+        <div className="skeleton" style={{ height: '80px', width: '40%', alignSelf: 'flex-end', borderRadius: 'var(--radius)' }}></div>
+        <div className="skeleton" style={{ height: '120px', width: '70%', borderRadius: 'var(--radius)' }}></div>
+      </div>
+      <div className="skeleton" style={{ height: '150px', marginTop: '2rem', borderRadius: 'var(--radius)' }}></div>
+    </div>
+  );
+  if (error) return <div className="main-content"><p style={{ color: 'var(--danger)', textAlign: 'center', marginTop: '4rem' }}>{error}</p></div>;
   if (!ticket) return null;
 
   return (

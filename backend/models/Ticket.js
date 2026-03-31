@@ -33,7 +33,12 @@ const Ticket = sequelize.define('Ticket', {
     allowNull: true
   }
 }, {
-  // Option to auto-generate TCK-XXXX logic could be added here or in the controller
+  indexes: [
+    { unique: true, fields: ['ticket_id'] },
+    { fields: ['customer_email'] },
+    { fields: ['status'] },
+    { fields: ['assigned_agent_id'] }
+  ]
 });
 
 module.exports = Ticket;

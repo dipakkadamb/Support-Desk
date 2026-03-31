@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { Clock, User as UserIcon, AlertCircle, ChevronRight } from 'lucide-react';
 
-const TicketCard = ({ ticket, onClick }) => {
+const TicketCard = memo(({ ticket, onClick }) => {
   const getStatusBadge = (status) => {
     switch (status) {
       case 'Open': return <span className="badge badge-open">Open</span>;
@@ -48,6 +48,6 @@ const TicketCard = ({ ticket, onClick }) => {
       </div>
     </div>
   );
-};
+});
 
 export default TicketCard;
