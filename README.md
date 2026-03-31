@@ -7,6 +7,7 @@ A high-performance, professional-grade support desk application built with React
 ### 1. Intelligence & Analytics Service
 - **Real-time Stats**: Track Total, Open, Pending, and Resolved tickets directly on the dashboard.
 - **Advanced Filtering**: Instant search by ID, Subject, or Customer, combined with status-based filtering.
+- **Ticket Creation**: Manually log new customer requests with custom priority and initial messages.
 - **Visual Overview**: Premium analytics cards with status indicators.
 
 ### 2. Communication & Action Service

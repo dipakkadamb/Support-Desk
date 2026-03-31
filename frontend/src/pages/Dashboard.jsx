@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import TicketCard from '../components/TicketCard';
+import NewTicketModal from '../components/NewTicketModal';
 import { Search, Filter, Plus, Activity, AlertCircle, Clock, CheckCircle, SearchX } from 'lucide-react';
 
 const Dashboard = ({ onTicketSelect }) => {
@@ -11,31 +12,32 @@ const Dashboard = ({ onTicketSelect }) => {
   const [statusFilter, setStatusFilter] = useState('All');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const fetchData = useCallback(async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const headers = { Authorization: `Bearer ${token}` };
+      
+      const [ticketsRes, statsRes] = await Promise.all([
+        axios.get('http://localhost:4000/api/tickets', { headers }),
+        axios.get('http://localhost:4000/api/tickets/stats', { headers })
+      ]);
+      
+      setTickets(ticketsRes.data);
+      setFilteredTickets(ticketsRes.data);
+      setStats(statsRes.data);
+    } catch (err) {
+      setError('Failed to fetch dashboard data');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        const headers = { Authorization: `Bearer ${token}` };
-        
-        const [ticketsRes, statsRes] = await Promise.all([
-          axios.get('http://localhost:4000/api/tickets', { headers }),
-          axios.get('http://localhost:4000/api/tickets/stats', { headers })
-        ]);
-        
-        setTickets(ticketsRes.data);
-        setFilteredTickets(ticketsRes.data);
-        setStats(statsRes.data);
-      } catch (err) {
-        setError('Failed to fetch dashboard data');
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchData();
-  }, []);
+  }, [fetchData]);
 
   useEffect(() => {
     const filtered = tickets.filter(ticket => {
@@ -65,10 +67,17 @@ const Dashboard = ({ onTicketSelect }) => {
           <h1 style={{ fontSize: '1.875rem', fontWeight: 700, letterSpacing: '-0.025em' }}>Welcome Back, Agent</h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.9375rem' }}>Here is what's happening with your support desk today.</p>
         </div>
-        <button className="btn btn-primary" onClick={() => alert('New ticket creation service coming soon!')}>
+        <button className="btn btn-primary" onClick={() => setIsModalOpen(true)}>
           <Plus size={18} /> New Ticket
         </button>
       </header>
+
+      {/* New Ticket Modal Service */}
+      <NewTicketModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+        onSuccess={() => fetchData()} 
+      />
 
       <div className="stats-grid">
         {statCards.map((card, idx) => (

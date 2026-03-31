@@ -87,4 +87,33 @@ const getTicketStats = async (req, res) => {
   }
 };
 
-module.exports = { getTickets, getTicketDetail, replyToTicket, updateTicket, getTicketStats };
+const createTicket = async (req, res) => {
+  const { customer_email, subject, body, priority } = req.body;
+  const agentId = req.user.id;
+
+  try {
+    const count = await Ticket.count();
+    const ticketId = `TCK-${(count + 1).toString().padStart(4, '0')}`;
+
+    const ticket = await Ticket.create({
+      ticket_id: ticketId,
+      customer_email,
+      subject,
+      priority: priority || 'Medium',
+      status: 'Open',
+      assigned_agent_id: agentId
+    });
+
+    await Message.create({
+      ticket_id: ticket.id,
+      body,
+      sender_type: 'Customer', // Initially logged as customer request
+    });
+
+    res.status(201).json({ message: 'Ticket created', ticket });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to create ticket', details: err.message });
+  }
+};
+
+module.exports = { getTickets, getTicketDetail, replyToTicket, updateTicket, getTicketStats, createTicket };
