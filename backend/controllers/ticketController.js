@@ -67,7 +67,19 @@ const updateTicket = async (req, res) => {
     const ticket = await Ticket.findByPk(id);
     if (!ticket) return res.status(404).json({ error: 'Ticket not found' });
 
+    const oldStatus = ticket.status;
     await ticket.update({ status, priority, assigned_agent_id });
+
+    // Service: Resolution Notification (Email client when closed)
+    if (status === 'Closed' && oldStatus !== 'Closed') {
+      const resolutionText = `Hello,\n\nWe're pleased to inform you that your support ticket [${ticket.ticket_id}] has been resolved and closed.\n\nSubject: ${ticket.subject}\n\nIf you have further questions, feel free to reply to this email to reopen the conversation.\n\nBest regards,\nSupportFlow Team`;
+      
+      // Fire and forget email notification
+      sendReply(ticket.ticket_id, ticket.customer_email, ticket.subject, resolutionText, true).catch(err => {
+        console.error('Failed to send resolution email:', err);
+      });
+    }
+
     res.json({ message: 'Ticket updated', ticket });
   } catch (err) {
     res.status(500).json({ error: 'Update failed', details: err.message });

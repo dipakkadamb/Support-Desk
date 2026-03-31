@@ -1,7 +1,7 @@
 const imaps = require('imap-simple');
 const { simpleParser } = require('mailparser');
 const nodemailer = require('nodemailer');
-const { Ticket, Message } = require('../models/associations');
+const { Ticket, Message, User } = require('../models/associations');
 const sequelize = require('../models/index');
 
 const config = {
@@ -54,11 +54,9 @@ const pollEmails = async () => {
           });
           console.log(`Updated Ticket ${ticketId}`);
         } else {
-          // Create new if ID not found (fallback)
           await createNewTicket(subject, fromEmail, body);
         }
       } else {
-        // Create new ticket
         await createNewTicket(subject, fromEmail, body);
       }
     }
@@ -76,11 +74,8 @@ const pollEmails = async () => {
 const createNewTicket = async (subject, email, body) => {
   const transaction = await sequelize.transaction();
   try {
-    // Generate simple Ticket ID
-    const lastTicket = await Ticket.findOne({
-      order: [['createdAt', 'DESC']]
-    });
-    
+    // 1. Generate professional Ticket ID
+    const lastTicket = await Ticket.findOne({ order: [['createdAt', 'DESC']] });
     let nextId = 1;
     if (lastTicket && lastTicket.ticket_id) {
       const lastNum = parseInt(lastTicket.ticket_id.split('-')[1]);
@@ -88,12 +83,18 @@ const createNewTicket = async (subject, email, body) => {
     }
     const ticketId = `TCK-${nextId.toString().padStart(4, '0')}`;
 
+    // 2. Service: Auto-Assignment (Assign to the first Admin found)
+    const admin = await User.findOne({ where: { role: 'admin' } });
+    
+    // 3. Create Ticket
     const newTicket = await Ticket.create({
       ticket_id: ticketId,
       subject: subject,
-      customer_email: email
+      customer_email: email,
+      assigned_agent_id: admin ? admin.id : null
     }, { transaction });
 
+    // 4. Log initial message
     await Message.create({
       ticket_id: newTicket.id,
       body: body,
@@ -101,14 +102,19 @@ const createNewTicket = async (subject, email, body) => {
     }, { transaction });
 
     await transaction.commit();
-    console.log(`Created Ticket ${ticketId}`);
+    console.log(`Created Ticket ${ticketId} [Auto-Assigned to ${admin ? admin.name : 'Unassigned'}]`);
+
+    // 5. Service: Auto-Acknowledgment (Professional Welcome Email)
+    const welcomeText = `Hello,\n\nYour support request has been received and logged as [${ticketId}]. Our team will review your ticket and get back to you shortly.\n\nSubject: ${subject}\n\nThank you for choosing SupportFlow.`;
+    await sendReply(ticketId, email, subject, welcomeText, true);
+
   } catch (err) {
     await transaction.rollback();
     console.log('Error creating ticket from email:', err);
   }
 };
 
-const sendReply = async (ticketId, customerEmail, subject, replyText) => {
+const sendReply = async (ticketId, customerEmail, subject, replyText, isSystemGen = false) => {
   const transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
     port: process.env.SMTP_PORT,
@@ -117,23 +123,21 @@ const sendReply = async (ticketId, customerEmail, subject, replyText) => {
       user: process.env.EMAIL_USER,
       password: process.env.EMAIL_PASSWORD
     },
-    tls: {
-      rejectUnauthorized: false
-    }
+    tls: { rejectUnauthorized: false }
   });
 
   const mailOptions = {
-    from: process.env.EMAIL_USER,
+    from: `SupportFlow <${process.env.EMAIL_USER}>`,
     to: customerEmail,
-    subject: `Re: [${ticketId}] ${subject}`,
+    subject: isSystemGen ? `[Received] [${ticketId}] ${subject}` : `Re: [${ticketId}] ${subject}`,
     text: replyText
   };
 
   try {
     await transporter.sendMail(mailOptions);
-    console.log(`Reply sent to ${customerEmail} for ticket ${ticketId}`);
+    console.log(`Email sent to ${customerEmail} for ticket ${ticketId}`);
   } catch (err) {
-    console.error('Error sending reply:', err);
+    console.error('Error sending email:', err);
     throw err;
   }
 };
