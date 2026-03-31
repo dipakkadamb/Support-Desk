@@ -65,7 +65,11 @@ const pollEmails = async () => {
 
     connection.end();
   } catch (err) {
-    console.error('Error polling emails:', err);
+    if (err.message.includes('AUTHENTICATIONFAILED')) {
+      console.error('❌ Email Polling Error: Authentication Failed. Please check your EMAIL_USER/EMAIL_PASSWORD in .env.');
+    } else {
+      console.error('Error polling emails:', err.message);
+    }
   }
 };
 

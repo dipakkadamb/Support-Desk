@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Sidebar from './components/Sidebar';
 import Dashboard from './pages/Dashboard';
 import TicketDetails from './pages/TicketDetails';
+import Settings from './pages/Settings';
 import Login from './pages/Login';
 
 function App() {
@@ -42,24 +43,35 @@ function App() {
     return <Login onLogin={handleLogin} />;
   }
 
+  const renderContent = () => {
+    if (selectedTicket) {
+      return <TicketDetails ticketId={selectedTicket} onBack={handleBack} />;
+    }
+
+    switch (activeTab) {
+      case 'dashboard':
+        return <Dashboard onTicketSelect={handleTicketSelect} />;
+      case 'tickets':
+        return <Dashboard onTicketSelect={handleTicketSelect} />;
+      case 'settings':
+        return <Settings />;
+      default:
+        return <Dashboard onTicketSelect={handleTicketSelect} />;
+    }
+  };
+
   return (
-    <div className="app-container">
-      <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} onLogout={handleLogout} />
-      <main style={{ flex: 1, height: '100vh', overflowY: 'auto' }}>
-        {selectedTicket ? (
-          <TicketDetails ticketId={selectedTicket} onBack={handleBack} />
-        ) : activeTab === 'dashboard' ? (
-          <Dashboard onTicketSelect={handleTicketSelect} />
-        ) : (
-          <div className="main-content">
-            <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-              <div>
-                <h1 style={{ fontSize: '1.5rem', fontWeight: 700 }}>{activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}</h1>
-                <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>Content for {activeTab} is coming soon...</p>
-              </div>
-            </header>
-          </div>
-        )}
+    <div className="app-container" style={{ background: 'var(--bg-main)', height: '100vh', width: '100vw', overflow: 'hidden' }}>
+      <Sidebar 
+        activeTab={selectedTicket ? 'tickets' : activeTab} 
+        setActiveTab={(tab) => {
+          setActiveTab(tab);
+          setSelectedTicket(null);
+        }} 
+        onLogout={handleLogout} 
+      />
+      <main style={{ flex: 1, height: '100vh', overflowY: 'auto', position: 'relative' }}>
+        {renderContent()}
       </main>
     </div>
   );

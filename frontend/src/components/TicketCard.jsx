@@ -1,5 +1,5 @@
 import React from 'react';
-import { Clock, User as UserIcon, AlertCircle } from 'lucide-react';
+import { Clock, User as UserIcon, AlertCircle, ChevronRight } from 'lucide-react';
 
 const TicketCard = ({ ticket, onClick }) => {
   const getStatusBadge = (status) => {
@@ -11,38 +11,40 @@ const TicketCard = ({ ticket, onClick }) => {
     }
   };
 
-  const getPriorityColor = (priority) => {
+  const getPriorityInfo = (priority) => {
     switch (priority) {
-      case 'High': return 'priority-high';
-      case 'Urgent': return 'priority-high';
-      case 'Medium': return 'priority-medium';
-      case 'Low': return 'priority-low';
-      default: return '';
+      case 'High': return { color: 'var(--danger)', label: 'High Priority' };
+      case 'Urgent': return { color: 'var(--danger)', label: 'Urgent' };
+      case 'Medium': return { color: 'var(--warning)', label: 'Medium' };
+      case 'Low': return { color: 'var(--success)', label: 'Low' };
+      default: return { color: 'var(--text-muted)', label: priority };
     }
   };
 
+  const priorityInfo = getPriorityInfo(ticket.priority);
+
   return (
-    <div className="ticket-card" onClick={onClick}>
+    <div className="ticket-card animate-fade-in" onClick={onClick}>
       <div style={{ flex: 1 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-          <span style={{ fontWeight: 600, color: 'var(--text-muted)', fontSize: '0.875rem' }}>#{ticket.ticket_id}</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '0.75rem' }}>
+          <span style={{ fontWeight: 700, color: 'var(--accent)', fontSize: '0.8125rem', padding: '4px 8px', background: '#eef2ff', borderRadius: '6px' }}>#{ticket.ticket_id}</span>
           {getStatusBadge(ticket.status)}
         </div>
-        <h3 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '8px' }}>{ticket.subject}</h3>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', fontSize: '0.8125rem', color: 'var(--text-muted)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-            <UserIcon size={14} /> {ticket.customer_email}
+        <h3 style={{ fontSize: '1.0625rem', fontWeight: 700, marginBottom: '0.75rem', color: 'var(--primary)', letterSpacing: '-0.01em' }}>{ticket.subject}</h3>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', fontSize: '0.8125rem', color: 'var(--text-muted)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <UserIcon size={14} /> <span style={{ fontWeight: 500 }}>{ticket.customer_email}</span>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }} className={getPriorityColor(ticket.priority)}>
-            <AlertCircle size={14} /> {ticket.priority}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: priorityInfo.color, fontWeight: 600 }}>
+            <AlertCircle size={14} /> {priorityInfo.label}
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-            <Clock size={14} /> {new Date(ticket.updatedAt).toLocaleDateString()}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <Clock size={14} /> Updated {new Date(ticket.updatedAt).toLocaleDateString()}
           </div>
         </div>
       </div>
-      <div>
-        <button className="btn btn-primary" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem' }}>View</button>
+      <div style={{ paddingLeft: '1.5rem', color: 'var(--border)' }}>
+        <ChevronRight size={20} />
       </div>
     </div>
   );

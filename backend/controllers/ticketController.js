@@ -74,4 +74,17 @@ const updateTicket = async (req, res) => {
   }
 };
 
-module.exports = { getTickets, getTicketDetail, replyToTicket, updateTicket };
+const getTicketStats = async (req, res) => {
+  try {
+    const total = await Ticket.count();
+    const open = await Ticket.count({ where: { status: 'Open' } });
+    const pending = await Ticket.count({ where: { status: 'Pending' } });
+    const closed = await Ticket.count({ where: { status: 'Closed' } });
+
+    res.json({ total, open, pending, closed });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch stats', details: err.message });
+  }
+};
+
+module.exports = { getTickets, getTicketDetail, replyToTicket, updateTicket, getTicketStats };
