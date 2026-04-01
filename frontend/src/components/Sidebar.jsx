@@ -63,6 +63,15 @@ const Sidebar = ({ activeTab, setActiveTab, onLogout }) => {
             <p style={{ fontSize: '0.75rem', color: '#64748b', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{user.role || 'Support Agent'}</p>
           </div>
         </div>
+
+        {user.role === 'admin' && (
+          <div style={{ padding: '0.5rem 1rem 1.5rem 1rem' }} className="animate-fade-in">
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: 'rgba(16, 185, 129, 0.1)', padding: '0.75rem', borderRadius: 'var(--radius-sm)', border: '1px solid rgba(16, 185, 129, 0.2)' }}>
+              <div style={{ width: '8px', height: '8px', background: '#10b981', borderRadius: '50%', boxShadow: '0 0 10px #10b981' }}></div>
+              <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#10b981', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Service Online</span>
+            </div>
+          </div>
+        )}
         <div
           className="nav-item logout-link"
           onClick={onLogout}

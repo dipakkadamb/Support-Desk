@@ -64,7 +64,8 @@ const pollEmails = async () => {
     connection.end();
   } catch (err) {
     if (err.message.includes('AUTHENTICATIONFAILED')) {
-      console.error('❌ Email Polling Error: Authentication Failed. Please check your EMAIL_USER/EMAIL_PASSWORD in .env.');
+      console.error('❌ EMAIL ERROR: Authentication Failed. (PollEmails)');
+      console.log('   👉 Advice: Use a 16-character Google App Password in .env, not your main password.');
     } else {
       console.error('Error polling emails:', err.message);
     }
