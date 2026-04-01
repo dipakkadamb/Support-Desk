@@ -21,6 +21,12 @@ const Dashboard = ({ onTicketSelect }) => {
   const fetchData = useCallback(async () => {
     try {
       const token = localStorage.getItem('token');
+      if (!token) {
+        setError('No session found. Please login again.');
+        setLoading(false);
+        return;
+      }
+
       const headers = { Authorization: `Bearer ${token}` };
       
       const [ticketsRes, statsRes] = await Promise.all([
@@ -31,8 +37,14 @@ const Dashboard = ({ onTicketSelect }) => {
       setTickets(ticketsRes.data);
       setFilteredTickets(ticketsRes.data);
       setStats(statsRes.data);
+      setError(''); // Clear error on success
     } catch (err) {
-      setError('Failed to fetch dashboard data');
+      if (err.response && (err.response.status === 401 || err.response.status === 400)) {
+        setError('Session expired. Please log in again.');
+        // Optionally clear local storage if you want to force redirect
+      } else {
+        setError('Failed to fetch dashboard data. Please check your connection.');
+      }
       console.error(err);
     } finally {
       setLoading(false);
@@ -152,9 +164,16 @@ const Dashboard = ({ onTicketSelect }) => {
           ))}
         </div>
       ) : error ? (
-        <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--danger)' }}>
-          <AlertCircle size={48} style={{ marginBottom: '1rem' }} />
-          <p>{error}</p>
+        <div style={{ textAlign: 'center', padding: '4rem', background: 'white', borderRadius: 'var(--radius)', border: '1px solid var(--border)' }}>
+          <AlertCircle size={48} style={{ color: 'var(--danger)', marginBottom: '1.5rem' }} />
+          <h3 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--primary)', marginBottom: '0.5rem' }}>{error}</h3>
+          <p style={{ color: 'var(--text-muted)', marginBottom: '2rem' }}>This usually happens if your session has timed out or if there is a network issue.</p>
+          <button 
+            onClick={() => { localStorage.clear(); window.location.reload(); }}
+            className="btn btn-primary"
+          >
+            Back to Login
+          </button>
         </div>
       ) : (
         <div className="ticket-list animate-fade-in" style={{ animationDelay: '0.2s' }}>

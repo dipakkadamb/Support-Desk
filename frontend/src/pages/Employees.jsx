@@ -23,7 +23,11 @@ const Employees = () => {
       });
       setEmployees(response.data);
     } catch (err) {
-      setError('Failed to fetch employee list');
+      if (err.response && (err.response.status === 401 || err.response.status === 400)) {
+        setError('Session expired. Please log in again to manage the team.');
+      } else {
+        setError('Failed to fetch employee list');
+      }
       console.error(err);
     } finally {
       setLoading(false);
@@ -90,6 +94,18 @@ const Employees = () => {
           {[1, 2, 3, 4].map(i => (
             <div key={i} className="skeleton" style={{ height: '60px', margin: '1rem 1.5rem', borderRadius: '4px' }}></div>
           ))}
+        </div>
+      ) : error && employees.length === 0 ? (
+        <div style={{ textAlign: 'center', padding: '4rem', background: 'white', border: '1px solid var(--border)', borderRadius: 'var(--radius)' }}>
+          <AlertCircle size={48} style={{ color: 'var(--danger)', marginBottom: '1.5rem' }} />
+          <h3 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--primary)', marginBottom: '0.5rem' }}>{error}</h3>
+          <button 
+            onClick={() => { localStorage.clear(); window.location.reload(); }}
+            className="btn btn-primary"
+            style={{ marginTop: '1rem' }}
+          >
+            Back to Login
+          </button>
         </div>
       ) : (
         <div style={{ background: 'white', border: '1px solid var(--border)', borderRadius: 'var(--radius)', overflow: 'hidden' }}>

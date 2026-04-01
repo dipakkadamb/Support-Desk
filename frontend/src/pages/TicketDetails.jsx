@@ -22,7 +22,11 @@ const TicketDetails = ({ ticketId, onBack }) => {
       });
       setTicket(response.data);
     } catch (err) {
-      setError('Failed to fetch ticket details');
+      if (err.response && (err.response.status === 401 || err.response.status === 400)) {
+        setError('Session expired. Please log in again.');
+      } else {
+        setError('Failed to fetch ticket details');
+      }
       console.error(err);
     } finally {
       setLoading(false);
@@ -88,7 +92,24 @@ const TicketDetails = ({ ticketId, onBack }) => {
       <div className="skeleton" style={{ height: '150px', marginTop: '2rem', borderRadius: 'var(--radius)' }}></div>
     </div>
   );
-  if (error) return <div className="main-content"><p style={{ color: 'var(--danger)', textAlign: 'center', marginTop: '4rem' }}>{error}</p></div>;
+  if (error) return (
+    <div className="main-content" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+      <AlertCircle size={64} style={{ color: 'var(--danger)', marginBottom: '1.5rem' }} />
+      <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--primary)', marginBottom: '1rem' }}>{error}</h2>
+      {error.includes('Session expired') && (
+        <button 
+          onClick={() => { localStorage.clear(); window.location.reload(); }}
+          className="btn btn-primary"
+          style={{ minWidth: '200px' }}
+        >
+          Back to Login
+        </button>
+      )}
+      {!error.includes('Session expired') && (
+        <button onClick={onBack} className="btn" style={{ background: '#f1f5f9' }}>Back to List</button>
+      )}
+    </div>
+  );
   if (!ticket) return null;
 
   return (
